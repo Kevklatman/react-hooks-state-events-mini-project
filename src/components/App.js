@@ -3,45 +3,34 @@ import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
 
-import {CATEGORIES,TASKS} from "../data";
+import { CATEGORIES, TASKS } from "../data";
+
 console.log("Here's the data you're working with");
-console.log({CATEGORIES,TASKS});
+console.log({ CATEGORIES, TASKS });
 
 function App() {
-  const [tasks, setTasks] = useState(TASKS);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  
+  const [tasks, setTasks] = useState(TASKS)
+  const [filterBy, setFilterBy] = useState("All")
 
-  const handleFilterChange = (category) => {
-    setSelectedCategory(category);
-  };
+  function handleDeleteTask(text){
+    setTasks(tasks.filter(task => task.text !== text))
+  }
 
-  const handleTaskFormSubmit = (task) => {
-    setTasks([...tasks, task]);
-    window.alert("Task added!");
-  };
+  function handleAddTask(newTask) {
+    setTasks([...tasks, newTask])
+  }
 
-  const handleDelete = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-    window.alert("Task deleted!");
-  };
-
-  const filteredTasks =
-    selectedCategory === "All"
-      ? tasks
-      : tasks.filter((task) => task.category === selectedCategory);
+  const filteredTasks = tasks.filter(task => 
+  filterBy === "All" ? true : task.category === filterBy
+  )
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter
-        categories={CATEGORIES}
-        selectedCategory={selectedCategory}
-        onFilterChange={handleFilterChange}
-      />
-      <NewTaskForm categories={CATEGORIES} 
-      onTaskFormSubmit={handleTaskFormSubmit} />
-      <TaskList tasks={filteredTasks} 
-      onDelete={handleDelete} />
+      <CategoryFilter categories={CATEGORIES} setFilterBy={setFilterBy} filterBy={filterBy}/>
+      <NewTaskForm categories={CATEGORIES.filter(category => category !== "All")} onTaskFormSubmit={handleAddTask}/>
+      <TaskList tasks={filteredTasks} onDeleteTask={handleDeleteTask}/>
     </div>
   );
 }
